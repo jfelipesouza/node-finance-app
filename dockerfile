@@ -1,23 +1,15 @@
-# Usa uma imagem oficial do Node
 FROM node:22
 
-# Define o diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos de dependências
-COPY package.json package-lock.json ./
+COPY package.json yarn.lock ./
 
-# Instala as dependências
-RUN npm install
+RUN yarn install
 
-# Copia o restante do código
 COPY . .
 
-# Compila o TypeScript
-RUN npm run build
+RUN yarn build
 
-# Expõe a porta da aplicação
 EXPOSE 3000
 
-# Comando para iniciar a aplicação
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
