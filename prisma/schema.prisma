@@ -14,11 +14,34 @@ datasource db {
 }
 
 model User {
-  id       Int    @unique @default(autoincrement())
-  username String @unique
+  id       Int     @id @default(autoincrement())
+  username String  @unique
   password String
-  email    String
+  email    String?
 
   createAt DateTime @default(now())
-  updateAt DateTime @default(now()) @updatedAt
+  updateAt DateTime @updatedAt
+
+  profile Profile?
+}
+
+model Profile {
+  id           Int         @id @default(autoincrement())
+  name         String?
+  work         String?
+  active       Boolean     @default(false)
+  account_type AccountType @default(FREE)
+
+  user     User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id  Int      @unique
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+}
+
+// Data Types
+enum AccountType {
+  FREE
+  BASIC
+  PRO
+  ADMIN
 }
