@@ -1,6 +1,8 @@
 import { Router } from 'express'
 import type { Request, Response } from 'express'
 
+import { signinRouters } from './signin'
+
 const router = Router()
 
 router.get('/', (req: Request, res: Response) => {
@@ -9,10 +11,6 @@ router.get('/', (req: Request, res: Response) => {
   })
 })
 
-router.get('/signin-bff', (req: Request, res: Response) => {
-  res.status(500).send({
-    message: 'Router not found'
-  })
-})
+router.use('/signin-bff', signinRouters)
 
 export { router }
