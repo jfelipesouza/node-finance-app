@@ -12,14 +12,20 @@ export const createAccount = async (req: Request, res: Response) => {
   if (!username || !email) {
     res.status(400).send({
       message: "Invalid credentials",
-      error: true,
+      error: {
+        status: true,
+        code: 100,
+      },
     });
     return;
   }
   if (type !== "supabase" && !password) {
     res.status(400).send({
       message: "Invalid credentials",
-      error: true,
+      error: {
+        status: true,
+        code: 100,
+      },
     });
     return;
   }
@@ -34,7 +40,7 @@ export const createAccount = async (req: Request, res: Response) => {
   if (userAlreadyExist) {
     res.status(409).send({
       message: "User already exist",
-      error: true,
+      error: { status: true, code: 101 },
     });
     return;
   }
@@ -47,5 +53,7 @@ export const createAccount = async (req: Request, res: Response) => {
     await checkProfile(prisma, { name: userInfo.name, userId: user.id });
   }
 
-  res.status(201).send({ message: "Account created", error: false });
+  res
+    .status(201)
+    .send({ message: "Account created", error: { status: false, code: 0 } });
 };
