@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
 import {
   generateAccessToken,
   verifyAccessToken,
   verifyRefreshToken,
-} from "../utils/jwt";
+} from "@utils/jwt";
+import { Request, Response, NextFunction } from "express";
 
 export const authenticate = (
   req: Request,

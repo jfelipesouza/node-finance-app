@@ -1,11 +1,10 @@
 import type { Request, Response } from "express";
-
-import { prisma } from "../../../utils/database/prisma-connection";
+import { prisma } from "@utils/database/prisma-connection";
 import {
   checkProfile,
   createUser,
   createUserUsingSupabase,
-} from "../../../services/create-account";
+} from "@services/create-account";
 
 export const createAccount = async (req: Request, res: Response) => {
   const { username, password, email, type, userInfo } = req.body;
