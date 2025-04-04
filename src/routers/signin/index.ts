@@ -1,13 +1,10 @@
-import { Request, Response, Router } from 'express'
-import { createAccount } from './create-account'
+import { Router } from "express";
+import { createAccount } from "./create-account";
+import { login } from "./login";
 
-const signinRouters = Router()
+const signinRouters = Router();
 
-signinRouters.post('/register', createAccount)
-signinRouters.post('/login', (req: Request, res: Response) => {
-  res.send({
-    message: 'Ok'
-  })
-})
+signinRouters.post("/register", createAccount);
+signinRouters.post("/login", login);
 
-export { signinRouters }
+export { signinRouters };
