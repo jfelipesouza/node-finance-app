@@ -52,6 +52,10 @@ const errors = [
   },
 ];
 
+export const isValidFilter = (value: any): value is ErrorsFilter => {
+  return value === "all" || value === "auth";
+};
+
 const errorsFilter = (errors: ErroInfo[], min: number, max: number) => {
   return errors.filter((item) => {
     if (item.code >= min && item.code < max) return item;
