@@ -16,7 +16,11 @@ export const login = async (req: Request, res: Response) => {
         },
         select: {
           email: true,
-          profile: true,
+          profile: {
+            select: {
+              createAt: true,
+            },
+          },
         },
       });
       if (user) {

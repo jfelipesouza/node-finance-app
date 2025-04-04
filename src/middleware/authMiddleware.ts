@@ -1,35 +1,59 @@
+import { Request, Response, NextFunction } from "express";
 import {
   generateAccessToken,
   verifyAccessToken,
   verifyRefreshToken,
 } from "@utils/jwt";
-import { Request, Response, NextFunction } from "express";
+import { prisma } from "@utils/database/prisma-connection";
 
-export const authenticate = (
+export const authenticate = async (
   req: Request,
   res: Response,
   next: NextFunction
-): void => {
+): Promise<void> => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
-    res.status(401).json({ message: "Access token not found" });
+    res.status(401).json({
+      message: "Access token not found",
+      error: {
+        status: true,
+        code: 104,
+      },
+    });
     return;
   }
 
   try {
     const decoded = verifyAccessToken(token);
-    req.user = decoded;
-    console.log({ decoded });
+
+    const user = await prisma.user.findFirst({
+      where: { email: decoded.email },
+      select: {
+        profile: {
+          select: { account_type: true },
+        },
+      },
+    });
+    if (user) {
+      req.user = user;
+    } else {
+      throw new Error();
+    }
+
     return next();
   } catch (err: any) {
     if (err.name === "TokenExpiredError") {
       const refreshToken = req.headers["x-refresh-token"] as string;
 
       if (!refreshToken) {
-        res
-          .status(401)
-          .json({ message: "Token expired. refresh token not exist" });
+        res.status(401).json({
+          message: "Token expired. refresh token not exist",
+          error: {
+            status: true,
+            code: 105,
+          },
+        });
         return;
       }
 
@@ -39,14 +63,39 @@ export const authenticate = (
           id: (decodedRefresh as any).id,
         });
         res.setHeader("x-access-token", newAccessToken);
-        req.user = decodedRefresh;
+
+        const user = await prisma.user.findFirst({
+          where: { email: decodedRefresh.email },
+          select: {
+            profile: {
+              select: { account_type: true },
+            },
+          },
+        });
+        if (user) {
+          req.user = user;
+        } else {
+          throw new Error();
+        }
         return next();
       } catch {
-        res.status(403).json({ message: "Refresh token invalid" });
+        res.status(403).json({
+          message: "Refresh token invalid",
+          error: {
+            status: true,
+            code: 106,
+          },
+        });
         return;
       }
     } else {
-      res.status(403).json({ message: "Token invalid" });
+      res.status(403).json({
+        message: "Token invalid",
+        error: {
+          status: true,
+          code: 107,
+        },
+      });
       return;
     }
   }
