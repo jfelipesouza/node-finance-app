@@ -29,6 +29,7 @@ export const createAccount = async (req: Request, res: Response) => {
     where: {
       OR: [{ username }, { email }],
     },
+    select: { createAt: true },
   });
 
   if (userAlreadyExist) {
