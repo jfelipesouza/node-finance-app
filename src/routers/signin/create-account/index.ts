@@ -1,51 +1,11 @@
 import type { Request, Response } from "express";
 
 import { prisma } from "../../../utils/database/prisma-connection";
-
-const createUserUsingSupabase = async (email: string, username: string) => {
-  const user = await prisma.user.upsert({
-    where: { email: email },
-    update: {},
-    create: {
-      email: email,
-      username: username,
-      password: "",
-    },
-  });
-  return user;
-};
-
-const createUser = async (
-  email: string,
-  username: string,
-  password: string
-) => {
-  const user = await prisma.user.upsert({
-    where: { email: email },
-    update: {},
-    create: {
-      email: email,
-      username: username,
-      password: password,
-    },
-  });
-  return user;
-};
-
-const checkProfile = async (userId: number, name: string = "") => {
-  const profile = await prisma.profile.findFirst({
-    where: { user_id: userId },
-  });
-  if (!profile) {
-    await prisma.profile.create({
-      data: {
-        id: userId,
-        user_id: userId,
-        name,
-      },
-    });
-  }
-};
+import {
+  checkProfile,
+  createUser,
+  createUserUsingSupabase,
+} from "../../../services/create-account";
 
 export const createAccount = async (req: Request, res: Response) => {
   const { username, password, email, type, userInfo } = req.body;
@@ -69,6 +29,7 @@ export const createAccount = async (req: Request, res: Response) => {
     where: {
       OR: [{ username }, { email }],
     },
+    select: { createAt: true },
   });
 
   if (userAlreadyExist) {
@@ -80,11 +41,11 @@ export const createAccount = async (req: Request, res: Response) => {
   }
 
   if (type === "supabase") {
-    const user = await createUserUsingSupabase(email, username);
-    await checkProfile(user.id, userInfo.name);
+    const user = await createUserUsingSupabase(prisma, { email, username });
+    await checkProfile(prisma, { name: userInfo.name, userId: user.id });
   } else {
-    const user = await createUser(email, username, password);
-    await checkProfile(user.id);
+    const user = await createUser(prisma, { email, username, password });
+    await checkProfile(prisma, { name: userInfo.name, userId: user.id });
   }
 
   res.status(201).send({ message: "Account created", error: false });

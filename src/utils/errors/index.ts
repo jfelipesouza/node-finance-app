@@ -1,4 +1,4 @@
-type ErroInfo = { code: number; description: string; name: string };
+export type ErroInfo = { code: number; description: string; name: string };
 
 export type ErrorsFilter = "all" | "auth";
 
@@ -52,15 +52,21 @@ const errors = [
   },
 ];
 
+const errorsFilter = (errors: ErroInfo[], min: number, max: number) => {
+  return errors.filter((item) => {
+    if (item.code >= min && item.code < max) return item;
+  });
+};
+
 export const allErrors = ({
   filter = "all",
 }: {
   filter: ErrorsFilter;
 }): ErroInfo[] => {
-  if (filter === "auth") {
-    return errors.filter((item) => {
-      if (item.code >= 100 && item.code < 200) return item;
-    });
+  switch (filter) {
+    case "auth":
+      return errorsFilter(errors, 100, 200);
+    default:
+      return errors;
   }
-  return errors;
 };
