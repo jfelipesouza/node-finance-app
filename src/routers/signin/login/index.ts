@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { prisma } from "../../../utils/database/prisma-connection";
-import { generateAccessToken, generateRefreshToken } from "../../../utils/jwt";
+import { prisma } from "@utils/database/prisma-connection";
+import { generateAccessToken, generateRefreshToken } from "@utils/jwt";
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body as {
