@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "tsx watch --no-cache --env-file=.env src/index.ts",
+    "dev": "tsx watch --no-cache src/index.ts",
     "studio": "npx prisma studio",
     "build": "tsup src",
     "push-db": "npx prisma db push"
@@ -16,12 +16,15 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "morgan": "^1.10.0"
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.13.10",
     "prisma": "^6.5.0",
